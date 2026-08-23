@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registered Citizens – CityFix Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="admin-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar d-none d-lg-block">
+            <div class="admin-sidebar-title">Municipal Console</div>
+            <a th:href="@{/admin/dashboard}" class="admin-nav-item">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a th:href="@{/admin/complaints}" class="admin-nav-item">
+                <i class="bi bi-card-list"></i> Complaints Redressal
+            </a>
+            <a th:href="@{/admin/users}" class="admin-nav-item active">
+                <i class="bi bi-people"></i> Registered Citizens
+            </a>
+            <hr class="border-secondary my-3">
+            <div class="admin-sidebar-title">System</div>
+            <a th:href="@{/}" class="admin-nav-item">
+                <i class="bi bi-globe"></i> View Public Site
+            </a>
+            <button class="admin-nav-item text-danger w-100 border-0 bg-transparent text-start" onclick="handleAdminLogout()">
+                <i class="bi bi-box-arrow-right"></i> Sign Out
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
+                <div>
+                    <h2 class="fw-bold mb-1">Registered Citizens Directory</h2>
+                    <p class="text-muted mb-0">View citizen profiles, contact information, and complaint submission volume.</p>
+                </div>
+            </div>
+
+            <!-- Users Table Card -->
+            <div class="cf-card">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Citizen ID</th>
+                                <th>Full Name</th>
+                                <th>Email Address</th>
+                                <th>Phone Number</th>
+                                <th>Complaints Filed</th>
+                                <th>Registration Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUsersTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center py-4">Loading registered citizens...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/admin.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAdminUsers();
+        });
+    </script>
+</body>
+</html>

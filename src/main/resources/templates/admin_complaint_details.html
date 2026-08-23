@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Details – CityFix Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="admin-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar d-none d-lg-block">
+            <div class="admin-sidebar-title">Municipal Console</div>
+            <a th:href="@{/admin/dashboard}" class="admin-nav-item">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a th:href="@{/admin/complaints}" class="admin-nav-item active">
+                <i class="bi bi-card-list"></i> Complaints Redressal
+            </a>
+            <a th:href="@{/admin/users}" class="admin-nav-item">
+                <i class="bi bi-people"></i> Registered Citizens
+            </a>
+            <hr class="border-secondary my-3">
+            <div class="admin-sidebar-title">System</div>
+            <a th:href="@{/}" class="admin-nav-item">
+                <i class="bi bi-globe"></i> View Public Site
+            </a>
+            <button class="admin-nav-item text-danger w-100 border-0 bg-transparent text-start" onclick="handleAdminLogout()">
+                <i class="bi bi-box-arrow-right"></i> Sign Out
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <!-- Breadcrumbs -->
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Admin</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin/complaints}">Complaints</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Review &amp; Redressal</li>
+                </ol>
+            </nav>
+
+            <div id="adminComplaintDetailsContent">
+                <input type="hidden" id="admDetNumericId">
+
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span class="fs-4 fw-bold text-primary" id="admDetComplaintId"></span>
+                            <span id="admDetStatusBadge"></span>
+                            <span id="admDetPriorityBadge"></span>
+                        </div>
+                        <h3 class="fw-bold mb-0" id="admDetTitle"></h3>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-danger" id="admDeleteBtn">
+                            <i class="bi bi-trash"></i> Delete Complaint
+                        </button>
+                        <a th:href="@{/admin/complaints}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> All Complaints
+                        </a>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Left: Details & Citizen Info -->
+                    <div class="col-lg-7">
+                        <div class="cf-card p-4 mb-4">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-info-circle text-primary me-2"></i>Issue Information</h5>
+                            
+                            <div class="mb-3">
+                                <span class="badge-category fs-6" id="admDetCategory"></span>
+                            </div>
+
+                            <div class="mb-4">
+                                <h6 class="fw-semibold text-muted small">Citizen Description</h6>
+                                <p class="lead fs-6 text-dark" id="admDetDescription" style="white-space: pre-line;"></p>
+                            </div>
+
+                            <div class="row g-3 p-3 bg-light rounded-3 border mb-3">
+                                <div class="col-md-6">
+                                    <div class="text-muted small fw-semibold">Reported Location</div>
+                                    <div class="fw-medium text-dark mt-1" id="admDetLocation"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="text-muted small fw-semibold">Submission Timestamp</div>
+                                    <div class="fw-medium text-dark mt-1" id="admDetCreatedAt"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="text-muted small fw-semibold">Last Updated</div>
+                                    <div class="fw-medium text-dark mt-1" id="admDetUpdatedAt"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Citizen Contact Card -->
+                        <div class="cf-card p-4">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-person-lines-fill text-primary me-2"></i>Citizen Contact Details</h5>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <small class="text-muted fw-semibold">Name</small>
+                                    <div class="fw-bold text-dark mt-1" id="admDetCitizenName">-</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <small class="text-muted fw-semibold">Email</small>
+                                    <div class="fw-bold text-dark mt-1" id="admDetCitizenEmail">-</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <small class="text-muted fw-semibold">Phone</small>
+                                    <div class="fw-bold text-dark mt-1" id="admDetCitizenPhone">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Photo & Status Update Form -->
+                    <div class="col-lg-5">
+                        <!-- Uploaded Photo -->
+                        <div class="cf-card p-4 mb-4 text-center">
+                            <h6 class="fw-bold mb-3 text-start"><i class="bi bi-camera text-primary me-2"></i>Attached Evidence</h6>
+                            <a href="#" id="admDetImageLink" target="_blank">
+                                <img id="admDetImage" src="" alt="Evidence" class="img-fluid rounded border shadow-sm w-100" style="max-height: 260px; object-fit: cover;">
+                            </a>
+                            <small class="text-muted d-block mt-2"><i class="bi bi-zoom-in"></i> Click photo to view original high-res</small>
+                        </div>
+
+                        <!-- Update Status Form -->
+                        <div class="cf-card p-4">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-pencil-square text-primary me-2"></i>Update Redressal Status</h5>
+                            
+                            <form id="adminUpdateStatusForm">
+                                <div class="mb-3">
+                                    <label for="admEditStatus" class="form-label">Workflow Status</label>
+                                    <select class="form-select" id="admEditStatus" required>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Assigned">Assigned (Dispatched to field team)</option>
+                                        <option value="In Progress">In Progress (Work underway)</option>
+                                        <option value="Resolved">Resolved (Completed &amp; closed)</option>
+                                        <option value="Rejected">Rejected (Invalid/Spam)</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="admEditRemarks" class="form-label">Official Department Remarks</label>
+                                    <textarea class="form-control" id="admEditRemarks" rows="4" placeholder="Enter remarks (e.g. Dispatched Road Team #4, Replaced broken lamp, Verified fix on site)..."></textarea>
+                                    <div class="form-text">Remarks are visible to the citizen on their portal.</div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 py-2">
+                                    <i class="bi bi-check2-circle"></i> Save Changes
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/admin.js}"></script>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+            const complaintId = /*[[${complaintIdParam}]]*/ '';
+            if (complaintId) {
+                loadAdminComplaintDetails(complaintId);
+                initAdminComplaintEditForm();
+            }
+        });
+    </script>
+</body>
+</html>

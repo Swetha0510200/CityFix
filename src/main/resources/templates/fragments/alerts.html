@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+
+<div th:fragment="alerts">
+    <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
+    <!-- Track Complaint Modal -->
+    <div class="modal fade" id="trackComplaintModal" tabindex="-1" aria-labelledby="trackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-primary text-white border-0 py-3">
+                    <h5 class="modal-title fw-bold" id="trackModalLabel">
+                        <i class="bi bi-search me-2"></i>Track Complaint Status
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="publicTrackForm" onsubmit="handlePublicTrack(event)" class="mb-4">
+                        <label for="trackComplaintInput" class="form-label fw-semibold">Enter Complaint ID / Code</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-hash"></i></span>
+                            <input type="text" class="form-control form-control-lg" id="trackComplaintInput" placeholder="e.g. CF-2026-0001" required>
+                            <button class="btn btn-primary px-4 fw-semibold" type="submit" id="trackSubmitBtn">
+                                <i class="bi bi-search me-1"></i> Track Now
+                            </button>
+                        </div>
+                        <div class="form-text">Instant live redressal tracking for any registered complaint.</div>
+                    </form>
+
+                    <!-- Tracking Result Box -->
+                    <div id="trackResultBox" class="d-none">
+                        <div class="card border rounded-3 p-3 bg-light">
+                            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2 pb-2 border-bottom">
+                                <div>
+                                    <span class="fs-5 fw-bold text-primary" id="trackResId">CF-2026-0001</span>
+                                    <h6 class="fw-bold mb-0 mt-1" id="trackResTitle">Issue Title</h6>
+                                </div>
+                                <div id="trackResBadges" class="d-flex gap-2"></div>
+                            </div>
+
+                            <div class="row g-2 small text-muted mb-3">
+                                <div class="col-sm-6">
+                                    <strong>Category:</strong> <span id="trackResCategory">-</span>
+                                </div>
+                                <div class="col-sm-6">
+                                    <strong>Reported On:</strong> <span id="trackResDate">-</span>
+                                </div>
+                                <div class="col-12">
+                                    <strong>Location:</strong> <span id="trackResLocation">-</span>
+                                </div>
+                            </div>
+
+                            <!-- Live Timeline in Modal -->
+                            <div class="my-3 py-2 bg-white rounded-3 border p-3">
+                                <h6 class="fw-bold mb-3 text-dark small text-uppercase letter-spacing-1">
+                                    <i class="bi bi-clock-history text-primary me-1"></i> Resolution Progress
+                                </h6>
+                                <div class="timeline-container">
+                                    <div class="timeline-step" id="modalStepSubmitted">
+                                        <div class="timeline-circle"><i class="bi bi-file-earmark-check"></i></div>
+                                        <div class="timeline-label">Submitted</div>
+                                    </div>
+                                    <div class="timeline-step" id="modalStepAssigned">
+                                        <div class="timeline-circle"><i class="bi bi-person-check"></i></div>
+                                        <div class="timeline-label">Assigned</div>
+                                    </div>
+                                    <div class="timeline-step" id="modalStepInProgress">
+                                        <div class="timeline-circle"><i class="bi bi-tools"></i></div>
+                                        <div class="timeline-label">In Progress</div>
+                                    </div>
+                                    <div class="timeline-step" id="modalStepResolved">
+                                        <div class="timeline-circle"><i class="bi bi-check-lg"></i></div>
+                                        <div class="timeline-label">Resolved</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Admin Remarks if any -->
+                            <div id="trackResRemarksBox" class="alert alert-info py-2 px-3 mb-0 small d-none">
+                                <div class="fw-bold"><i class="bi bi-chat-quote-fill me-1"></i> Official Remarks:</div>
+                                <div id="trackResRemarksText" class="mt-1"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tracking Error Box -->
+                    <div id="trackErrorBox" class="alert alert-danger d-none mb-0">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <span id="trackErrorMsg">Complaint not found. Please verify the Complaint ID.</span>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

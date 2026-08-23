@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Complaints – CityFix Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="admin-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar d-none d-lg-block">
+            <div class="admin-sidebar-title">Municipal Console</div>
+            <a th:href="@{/admin/dashboard}" class="admin-nav-item">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a th:href="@{/admin/complaints}" class="admin-nav-item active">
+                <i class="bi bi-card-list"></i> Complaints Redressal
+            </a>
+            <a th:href="@{/admin/users}" class="admin-nav-item">
+                <i class="bi bi-people"></i> Registered Citizens
+            </a>
+            <hr class="border-secondary my-3">
+            <div class="admin-sidebar-title">System</div>
+            <a th:href="@{/}" class="admin-nav-item">
+                <i class="bi bi-globe"></i> View Public Site
+            </a>
+            <button class="admin-nav-item text-danger w-100 border-0 bg-transparent text-start" onclick="handleAdminLogout()">
+                <i class="bi bi-box-arrow-right"></i> Sign Out
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
+                <div>
+                    <h2 class="fw-bold mb-1">Civic Complaints Redressal</h2>
+                    <p class="text-muted mb-0">Review, assign work orders, update status, and manage all citizen complaints.</p>
+                </div>
+            </div>
+
+            <!-- Filters Bar -->
+            <div class="cf-card p-3 mb-4">
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" id="adminSearch" placeholder="Search ID, title, citizen name, email...">
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <select class="form-select" id="adminFilterCategory">
+                            <option value="">All Categories</option>
+                            <option value="Pothole">Pothole</option>
+                            <option value="Garbage">Garbage</option>
+                            <option value="Streetlight">Streetlight</option>
+                            <option value="Water Leakage">Water Leakage</option>
+                            <option value="Drainage">Drainage</option>
+                            <option value="Road Damage">Road Damage</option>
+                            <option value="Traffic Signal">Traffic Signal</option>
+                            <option value="Public Toilet">Public Toilet</option>
+                            <option value="Illegal Dumping">Illegal Dumping</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <select class="form-select" id="adminFilterStatus">
+                            <option value="">All Statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Assigned">Assigned</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-lg-2">
+                        <select class="form-select" id="adminFilterPriority">
+                            <option value="">All Priorities</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Complaints Table Card -->
+            <div class="cf-card">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 60px;">Photo</th>
+                                <th>Complaint ID</th>
+                                <th>Citizen</th>
+                                <th>Issue Details</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Date Filed</th>
+                                <th class="text-end pe-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminComplaintsTableBody">
+                            <tr>
+                                <td colspan="8" class="text-center py-4">Loading complaints...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Status Update Modal -->
+    <div class="modal fade" id="statusUpdateModal" tabindex="-1" aria-labelledby="statusUpdateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="statusUpdateModalLabel">
+                        <i class="bi bi-pencil-square text-primary me-1"></i> Update Status: <span id="modalComplaintId" class="text-primary"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="modalComplaintNumericId">
+                    
+                    <div class="mb-3">
+                        <label for="modalStatusSelect" class="form-label">Workflow Status</label>
+                        <select class="form-select" id="modalStatusSelect">
+                            <option value="Pending">Pending</option>
+                            <option value="Assigned">Assigned (Field crew notified)</option>
+                            <option value="In Progress">In Progress (Work in progress)</option>
+                            <option value="Resolved">Resolved (Completed &amp; verified)</option>
+                            <option value="Rejected">Rejected (Invalid/Duplicate)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="modalRemarksText" class="form-label">Official Admin Remarks</label>
+                        <textarea class="form-control" id="modalRemarksText" rows="4" placeholder="Enter department action notes, repair team details, or reason for resolution/rejection..."></textarea>
+                        <div class="form-text">Remarks are visible to the citizen on their tracking page.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveStatusFromModal()">
+                        <i class="bi bi-check2-circle"></i> Save Updates
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/admin.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAdminComplaints();
+        });
+    </script>
+</body>
+</html>
